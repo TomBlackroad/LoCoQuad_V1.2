@@ -7,25 +7,13 @@ from time import sleep          #import
 import mbl_bots
 
 class IMU:
-	#some MPU6050 Registers and their Address
-	# PWR_MGMT_1   = 0x6B
-	# SMPLRT_DIV   = 0x19
-	# CONFIG       = 0x1A
-	# GYRO_CONFIG  = 0x1B
-	# INT_ENABLE   = 0x38
-	# ACCEL_XOUT_H = 0x3B
-	# ACCEL_YOUT_H = 0x3D
-	# ACCEL_ZOUT_H = 0x3F
-	# GYRO_XOUT_H  = 0x43
-	# GYRO_YOUT_H  = 0x45
-	# GYRO_ZOUT_H  = 0x47
 
 	def __init__(self, bus):
 		#bus = smbus.SMBus(3)    # or bus = smbus.SMBus(0) for older version boards
 		self.bus = bus
 		self.Device_Address = 0x68   # MPU6050 device address
 		self.MPU_Init()
-		print (" Reading Data of Gyroscope and Accelerometer")
+		print ("--> IMU Ready")
 
 
 	def MPU_Init(self):
@@ -59,7 +47,6 @@ class IMU:
 		return value
 
 	def getImuRawData(self):
-		data = [0,0,0,0,0,0]
 		try:
 	        #Read Accelerometer raw value
 			acc_x = self.read_raw_data(mbl_bots.ACCEL_XOUT_H)
@@ -81,10 +68,20 @@ class IMU:
 			Gz = gyro_z/131.0
 
 			data = [Ax,Ay,Az,Gx,Gy,Gz]
-			return data
 
 		except:
+			data = [0,0,0,0,0,0]
 			print("Error getting IMU data... something went wrong!!")
-			return data
+		
+		return data
 
-		print ("Gx=%.2f" %Gx, u'\u00b0'+ "/s", "\tGy=%.2f" %Gy, u'\u00b0'+ "/s", "\tGz=%.2f" %Gz, u'\u00b0'+ "/s", "\tAx=%.2f g" %Ax, "\tAy=%.2f g" %Ay, "\tAz=%.2f g" %Az)
+	def getStringImuRawData(self):
+		data = self.getImuRawData()
+		return "Gx=%.2f" %data[0], u'\u00b0'+ "/s", "\tGy=%.2f" %data[1], u'\u00b0'+ "/s", "\tGz=%.2f" %data[2], u'\u00b0'+ "/s", "\tAx=%.2f g" %data[3], "\tAy=%.2f g" %data[4], "\tAz=%.2f g" %data[5])
+	
+	def detectCatch(self, imu):
+        data = self.getImuRawData()
+        if(data[3] < 3 or data[4] < 3 or data[5] < 3): 
+            return True
+        else: 
+            return False

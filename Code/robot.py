@@ -7,8 +7,10 @@ import utils
 import mbl_bots
 import logging
 
-
 from servo_hat_driver import PCA9685
+from IMU import IMU
+from camera import Cam
+from vision_tools import Vision
 
 
 class Robot(object):
@@ -28,7 +30,9 @@ class Robot(object):
 		self.state = mbl_bots.INIT
 		self.exploreState = mbl_bots.GETDATA
 		self.movesCode = mbl_bots.NONE
-		#print(self.acc_dic)
+		self.camera = Cam()
+        self.imu = IMU(self.bus)
+        self.vision = Vision()
 
 	def moveAcc(self,name,pos):
 		poss = pos*mbl_bots.SCALE_ACC + mbl_bots.CNT_ACC
@@ -130,8 +134,8 @@ class Robot(object):
 		else: 
 			return False
 
-	def isBalanced(self, imu):
-		data = imu.getImuRawData()
+	def isBalanced(self):
+		data = self.imu.getImuRawData()
 		if(data[0] < 0.2 or data[1] < 0.2): 
 			return True
 		else: 

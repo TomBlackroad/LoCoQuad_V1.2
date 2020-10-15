@@ -3,9 +3,11 @@ import time
 import math
 import smbus
 import sys
+
 # ============================================================================
 #Raspi PCA9685 16-Channel PWM Servo Driver
 # ============================================================================
+
 class PCA9685:
   # Registers/etc.
   __SUBADR1 = 0x02
@@ -21,6 +23,7 @@ class PCA9685:
   __ALLLED_ON_H = 0xFB
   __ALLLED_OFF_L = 0xFC
   __ALLLED_OFF_H = 0xFD
+
   def __init__(self, bus, address=0x40, debug=False):
     #self.bus = smbus.SMBus(1)
     self.bus = bus
@@ -62,6 +65,7 @@ class PCA9685:
     self.write(self.__MODE1, oldmode)
     time.sleep(0.005)
     self.write(self.__MODE1, oldmode | 0x80)
+    
   def setPWM(self, channel, on, off):
     "Sets a single PWM channel"
     self.write(self.__LED0_ON_L+4*channel, on & 0xFF)
