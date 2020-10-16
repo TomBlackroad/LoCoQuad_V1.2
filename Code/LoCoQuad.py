@@ -115,7 +115,7 @@ class LoCoQuad(Robot):
         start_time = time.time()
         self.frame = super().camera.getFrame()
         end_time = time.time()
-        print('It took me {} us to get the frame' format(start_time-end_time))
+        print('It took me {} us to get the frame'.format(start_time-end_time))
         self.exploreState = mbl_bots.PROCESSDATA
 
     def exploreProcessData(self):
@@ -126,13 +126,13 @@ class LoCoQuad(Robot):
         data = super().vision.analyze(self.frame)
         end_time = time.time()
         print(' ')
-        print('It took me {} us to process the frame' format(start_time-end_time))
+        print('It took me {} us to process the frame'.format(start_time-end_time))
         if data is not None:    
-            print("I am in coordinates: X={} Y={} T={}", format(data[0][1],data[0][2],data[0][3]))
+            print("I am in coordinates: X={} Y={} T={}".format(data[0][1],data[0][2],data[0][3]))
             self.lastdata = data
         else:
             print("Ohh!! I couldn't find my coordinates...")
-            print("I was in coordinates: X={} Y={} T={} last time", format(data[0][1],data[0][2],data[0][3]))
+            print("I was in coordinates: X={} Y={} T={} last time".format(data[0][1],data[0][2],data[0][3]))
 
         self.exploreState = mbl_bots.MOVE
 
