@@ -46,6 +46,7 @@ class Handler:
 		self.without_tag_frame_number = 0
 		self.tag_number_history = []
 		self.frame = None # Initial FRAME value
+		self.frame_number = 0 # Initial
 		self.ret = True
 
 		self.real_dist_submatrix = None
@@ -61,10 +62,14 @@ class Handler:
 		self.tvec_small = None
 		self.rvec_big = None
 		self.tvec_big = None
+		self.frame_number += 1
 		
 		measured_T_C = []
 
-		self.frame = cv2.cvtColor(self.original_frame, cv2.COLOR_BGR2GRAY)
+		self.frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+		print(' ')
+		print('The Gray Scale frame from camera has size: {}x{}'.format(se))
+		print(' ')
 		#-- Find all the aruco markers in the image
 		self.corners_small, self.corners_big, self.ids_small, self.ids_big = self.frame_analyzer.findAllArUcoTags(self.frame)
 		#-- Compute all poses from ids and corners
@@ -220,7 +225,7 @@ class Handler:
 			print('Frame ' + str(self.frame_id) + ' arrived correctly to the frame_handler!!')
 
 		except:
-			print('No information acquired from frame ' + str(self.frame_id))
+			print('No information acquired from frame ' + str(self.frame_number))
 			dataList = None
 			confi_vector = None
 
