@@ -15,6 +15,7 @@ class Cam(object):
 	def getFrame(self):
 		self.camera.capture(self.rawCapture, format="bgr")
 		frame = self.rawCapture.array
+		print('Captured %dx%d image' % (frame.shape[1], frame.shape[0]))
 		return frame
 
 	def truncateFrame(self):
