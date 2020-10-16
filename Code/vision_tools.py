@@ -191,6 +191,7 @@ class Vision:
 			processed_data = self.processData(data, confi_vector)
 
 		except:
+			processed_data = None
 			err_message = 'ERROR in frame ' + str(self.frame_handler.frame_id) + '\n'
 			print(err_message)
 

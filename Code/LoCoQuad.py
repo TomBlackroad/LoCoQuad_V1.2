@@ -55,7 +55,7 @@ class LoCoQuad(Robot):
         GPIO.setmode(GPIO.BCM) # use Raspberry Pi board pin numbers
         self.lastIMU = [0.0,0.0,0.0,0.0,0.0,0.0]
         self.currentIMU = [0.0,0.0,0.0,0.0,0.0,0.0]
-        
+        self.lastdata = -1
         signal.signal(signal.SIGINT, self.close)
         self.state = mbl_bots.REST
         time.sleep(1)
@@ -125,9 +125,15 @@ class LoCoQuad(Robot):
         start_time = time.time()
         data = super().vision.analyze(self.frame)
         end_time = time.time()
+        print(' ')
         print('It took me {} us to process the frame' format(start_time-end_time))
-        print("I am in coordinates: X={} Y={} T={}", format(data[0][1],data[0][2],data[0][3]))
-        
+        if data is not None:    
+            print("I am in coordinates: X={} Y={} T={}", format(data[0][1],data[0][2],data[0][3]))
+            self.lastdata = data
+        else:
+            print("Ohh!! I couldn't find my coordinates...")
+            print("I was in coordinates: X={} Y={} T={} last time", format(data[0][1],data[0][2],data[0][3]))
+
         self.exploreState = mbl_bots.MOVE
 
     def exploreMove(self):
@@ -138,28 +144,10 @@ class LoCoQuad(Robot):
         super().camera.startVideo()
         time.sleep(3)
         start_time = time.time()
-        while ((time.time()-start_time)<30):
+        while ((time.time()-start_time)<1):
             super().turnRight()
-        #    super().walkFront()
-        #super().camera.endVideo()
         time.sleep(1)    
-        #pose_count = 0
-        # while ((time.time()-start_time)<60):
-        #     if(super().isBalanced()):
-        #         super().balancePos(pose_count)
-        #     else:
-        #         super().balancePos(pose_count)
-        #     if (pose_count >= 11):
-        #         pose_count = 0 
-        #     else:    
-        #         pose_count = pose_count + 1
-        #     time.sleep(0.5)
-        # super().stand()
-        # time.sleep(3)
-        # super().walkFront()
-        # super().walkFront()
-        # super().walkFront()
-        # super().walkFront()
+
         self.exploreState = mbl_bots.GETDATA
         self.state = mbl_bots.EXPLORE
 
