@@ -77,7 +77,6 @@ class IMU:
 
 	def getStringImuRawData(self):
 		data = self.getImuRawData()
-		# "Gx=%.2f" %data[0], u'\u00b0'+ "/s", "\tGy=%.2f" %data[1], u'\u00b0'+ "/s", "\tGz=%.2f" %data[2], u'\u00b0'+ "/s", "\tAx=%.2f g" %data[3], "\tAy=%.2f g" %data[4], "\tAz=%.2f g" %data[5])
 		msg ="Gx = {}\tGy = {}\tGz = {}/s \tAx = {}g\tAy = {}g\tAz = {}g".format(data[0],data[1],data[2],data[3],data[4],data[5])
 		return msg
 
