@@ -9,7 +9,7 @@ class Cam(object):
 		self.camera = PiCamera()
 		self.camera.resolution = (640, 480)
 		self.camera.rotation = 180
-		self.camera.framerate = 30
+		self.camera.framerate = 10
 		self.rawCapture = PiRGBArray(self.camera)
 	
 	def getFrame(self):
