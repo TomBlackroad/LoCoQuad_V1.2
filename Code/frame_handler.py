@@ -215,7 +215,7 @@ class Handler:
 ###############################################################################
 
 	def processNextFrame(self,frame):
-		try
+		try:
 			dataList, confi_vector = self.processFrame(frame)
 			print('Frame ' + str(self.frame_id) + ' arrived correctly to the frame_handler!!')
 
