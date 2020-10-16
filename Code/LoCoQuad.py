@@ -69,7 +69,7 @@ class LoCoQuad(Robot):
     def REST(self):
         print("CURRENT STATE: REST")
         start_time = time.time()
-        while ((time.time()-start_time)<ac.REST_TIME):
+        while ((time.time()-start_time)<REST_TIME):
             if(self.imu.detectCatch()):
                 for i in range(3):
                     super(LoCoQuad, self).shake()
@@ -147,7 +147,7 @@ class LoCoQuad(Robot):
         #super(LoCoQuad, self).move(self.movesCode)
         
 
-        if ((time.time()-self.exploreTime)>ac.EXPLORATION_TIME):
+        if ((time.time()-self.exploreTime)>EXPLORATION_TIME):
             self.exploreState = mbl_bots.GETDATA
             self.state = mbl_bots.REST
 
