@@ -79,8 +79,8 @@ class IMU:
 		data = self.getImuRawData()
 		msg = "Gx = {}\tGy = {}\tGz = {}/s \tAx = {}g\tAy = {}g\tAz = {}g".format(data[0],data[1],data[2],data[3],data[4],data[5])
 		return msg
-		
-	def detectCatch(self, imu):
+
+	def detectCatch(self):
 		data = self.getImuRawData()
 		if(data[3] < 3 or data[4] < 3 or data[5] < 3): 
 			return True
