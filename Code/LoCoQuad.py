@@ -99,14 +99,14 @@ class LoCoQuad(Robot):
         print("CURRENT STATE: EXPLORE")
         super(LoCoQuad, self).flat()
         self.exploreTime = time.time()
-        self.camera.startVideo()
+        #self.camera.startVideo()
 
         time.sleep(1)
         super(LoCoQuad, self).stand()
         #EXPLORING FiniteStateMachine
         while(self.state == mbl_bots.EXPLORE):
             self.exploreFSM(self.exploreState)
-        self.camera.endVideo()
+        #self.camera.endVideo()
         
 
     def exploreGetData(self):
