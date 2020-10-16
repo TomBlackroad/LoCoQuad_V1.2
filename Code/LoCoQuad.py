@@ -91,7 +91,6 @@ class LoCoQuad(Robot):
             0 : self.exploreGetData,
             1 : self.exploreProcessData,
             2 : self.exploreMove,
-            3 : self.exploreReconTurn,
         }
         func = substates_explorelist.get(state, lambda:None)
         return func()
