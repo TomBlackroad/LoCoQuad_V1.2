@@ -22,12 +22,12 @@ class LoCoQuad(Robot):
         filename = os.path.join(self.dir, mbl_bots.ROBOTFILE)
         print("Directory: " + self.dir)
         print("RobotFileDirectory: " + filename)        
-        super().__init__(filename)
+        super(LoCoQuad, self).__init__(filename)
 
         if(len(sys.argv)==2):
             print("EXECUTING TEST OF MOVEMENT", str(sys.argv[1])) 
             while True:
-                super().executeMove(str(sys.argv[1]), 1)
+                super(LoCoQuad, self).executeMove(str(sys.argv[1]), 1)
         else: 
             while True:
                 self.generalFSM(self.state)
@@ -70,9 +70,9 @@ class LoCoQuad(Robot):
         print("CURRENT STATE: REST")
         start_time = time.time()
         while ((time.time()-start_time)<45):
-            if(super().imu.detectCatch()):
+            if(super(LoCoQuad, self).imu.detectCatch()):
                 for i in range(3):
-                    super().shake()
+                    super(LoCoQuad, self).shake()
                 break
             else:
                 time.sleep(0.2)
@@ -98,9 +98,9 @@ class LoCoQuad(Robot):
 
     def EXPLORE(self):
         print("CURRENT STATE: EXPLORE")
-        super().flat()
+        super(LoCoQuad, self).flat()
         time.sleep(1)
-        super().stand()
+        super(LoCoQuad, self).stand()
         #EXPLORING FiniteStateMachine
         while(self.state == mbl_bots.EXPLORE):
             self.exploreFSM(self.exploreState)
@@ -111,9 +111,9 @@ class LoCoQuad(Robot):
         print("CURRENT SUBSTATE: DATA ACQUISITION")
         self.distance = utils.getDistance()
         self.lastIMU = self.currentIMU
-        self.currentIMU = super().imu.getImuRawData()
+        self.currentIMU = super(LoCoQuad, self).imu.getImuRawData()
         start_time = time.time()
-        self.frame = super().camera.getFrame()
+        self.frame = super(LoCoQuad, self).camera.getFrame()
         end_time = time.time()
         print('It took me {} us to get the frame'.format(start_time-end_time))
         self.exploreState = mbl_bots.PROCESSDATA
@@ -123,7 +123,7 @@ class LoCoQuad(Robot):
         print("CURRENT SUBSTATE: DATA PROCESSING")
         time.sleep(1)
         start_time = time.time()
-        data = super().vision.analyze(self.frame)
+        data = super(LoCoQuad, self).vision.analyze(self.frame)
         end_time = time.time()
         print(' ')
         print('It took me {} us to process the frame'.format(start_time-end_time))
@@ -139,13 +139,13 @@ class LoCoQuad(Robot):
     def exploreMove(self):
         print("CURRENT STATE: EXPLORE")
         print("CURRENT SUBSTATE: MOVING")
-        #super().move(self.movesCode)
-        #super().move(self.movesCode)
-        super().camera.startVideo()
+        #super(LoCoQuad, self).move(self.movesCode)
+        #super(LoCoQuad, self).move(self.movesCode)
+        super(LoCoQuad, self).camera.startVideo()
         time.sleep(3)
         start_time = time.time()
         while ((time.time()-start_time)<1):
-            super().turnRight()
+            super(LoCoQuad, self).turnRight()
         time.sleep(1)    
 
         self.exploreState = mbl_bots.GETDATA
@@ -165,8 +165,8 @@ class LoCoQuad(Robot):
     def SHOWOFF(self):
         print("CURRENT STATE: SHOWOFF")
         #SHOWOFF METHODS
-        super().swing()
-        super().sayHello()
+        super(LoCoQuad, self).swing()
+        super(LoCoQuad, self).sayHello()
         self.state = mbl_bots.EXPLORE
 
 #=============================================================================
@@ -174,15 +174,15 @@ class LoCoQuad(Robot):
 #=============================================================================    
     def PHOTO(self):
         print("CURRENT STATE: PHOTO")
-        super().cameraPose()
-        super().camera.takePic()
-        super().stand()
+        super(LoCoQuad, self).cameraPose()
+        super(LoCoQuad, self).camera.takePic()
+        super(LoCoQuad, self).stand()
         self.state = mbl_bots.EXPLORE
 
 
 
     def close(self, signal, frame):
-        super().camera.close()
+        super(LoCoQuad, self).camera.close()
         print("\nTurning off LoCoQuad Activity...\n")
         GPIO.cleanup() 
         sys.exit(0)
