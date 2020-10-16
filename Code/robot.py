@@ -31,8 +31,8 @@ class Robot(object):
 		self.exploreState = mbl_bots.GETDATA
 		self.movesCode = mbl_bots.NONE
 		self.camera = Cam()
-        self.imu = IMU(self.bus)
-        self.vision = Vision()
+		self.imu = IMU(self.bus)
+		self.vision = Vision()
 
 	def moveAcc(self,name,pos):
 		poss = pos*mbl_bots.SCALE_ACC + mbl_bots.CNT_ACC
