@@ -27,7 +27,7 @@ import sys, time, math, os
 import scipy.signal as sci
 import scipy.ndimage as sci2 
 
-import analysis_configurator as ac
+import mbl_bots as ac
 
 
 class Model:
