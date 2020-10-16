@@ -153,7 +153,7 @@ class LoCoQuad(Robot):
 
         else:
             start_time = time.time()
-            super(LoCoQuad, self).turnRight()
+            #super(LoCoQuad, self).turnRight()
             end_time = time.time()
             print(' ')
             print('It took me {} s to move'.format(start_time-end_time))
@@ -190,7 +190,7 @@ class LoCoQuad(Robot):
 
 
     def close(self, signal, frame):
-        self.camera.close()
+        #self.camera.close()
         print("\nTurning off LoCoQuad Activity...\n")
         GPIO.cleanup() 
         sys.exit(0)
