@@ -117,6 +117,7 @@ class LoCoQuad(Robot):
         self.currentIMU = self.imu.getImuRawData()
         start_time = time.time()
         self.frame = self.camera.getFrame()
+        self.camera.trucateFrame()
         end_time = time.time()
         print('It took me {} s to get the frame'.format(start_time-end_time))
         self.exploreState = mbl_bots.PROCESSDATA

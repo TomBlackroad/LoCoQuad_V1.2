@@ -13,10 +13,12 @@ class Cam(object):
 		self.rawCapture = PiRGBArray(self.camera)
 	
 	def getFrame(self):
-		self.rawCapture.truncate(0)
 		self.camera.capture(self.rawCapture, format="bgr")
 		frame = self.rawCapture.array
 		return frame
+
+	def truncateFrame(self):
+		self.rawCapture.truncate(0)
 
 	def takePic(self, output_dir="./Captures/"):
 		self.camera.start_preview()
