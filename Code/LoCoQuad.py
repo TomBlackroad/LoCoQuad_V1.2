@@ -69,7 +69,7 @@ class LoCoQuad(Robot):
     def REST(self):
         print("CURRENT STATE: REST")
         start_time = time.time()
-        while ((time.time()-start_time)<45):
+        while ((time.time()-start_time)<ac.REST_TIME):
             if(self.imu.detectCatch()):
                 for i in range(3):
                     super(LoCoQuad, self).shake()
@@ -99,11 +99,15 @@ class LoCoQuad(Robot):
     def EXPLORE(self):
         print("CURRENT STATE: EXPLORE")
         super(LoCoQuad, self).flat()
+        self.exploreTime = time.time()
+        self.camera.startVideo()
+
         time.sleep(1)
         super(LoCoQuad, self).stand()
         #EXPLORING FiniteStateMachine
         while(self.state == mbl_bots.EXPLORE):
             self.exploreFSM(self.exploreState)
+        self.camera.endVideo()
         
 
     def exploreGetData(self):
@@ -115,25 +119,24 @@ class LoCoQuad(Robot):
         start_time = time.time()
         self.frame = self.camera.getFrame()
         end_time = time.time()
-        print('It took me {} us to get the frame'.format(start_time-end_time))
+        print('It took me {} s to get the frame'.format(start_time-end_time))
         self.exploreState = mbl_bots.PROCESSDATA
 
     def exploreProcessData(self):
         print("CURRENT STATE: EXPLORE")
         print("CURRENT SUBSTATE: DATA PROCESSING")
-        time.sleep(1)
         start_time = time.time()
         data = self.vision.analyze(self.frame)
         end_time = time.time()
         print(' ')
-        print('It took me {} us to process the frame'.format(start_time-end_time))
+        print('It took me {} s to process the frame'.format(start_time-end_time))
         if data is not None:    
             print("I am in coordinates: X={} Y={} T={}".format(data[0][1],data[0][2],data[0][3]))
             self.lastdata = data
         else:
             print("Ohh!! I couldn't find my coordinates...")
             if self.lastdata != -1:
-                print("I was in coordinates: X={} Y={} T={} last time".format(self.lastdata[0][1],self.lastdata[0][2],self.lastdata[0][3]))
+                print("I was in coordinates: X={} Y={} T={} last time (frame: {})".format(self.lastdata[0][1],self.lastdata[0][2],self.lastdata[0][3],self.lastdata[0][0]))
 
         self.exploreState = mbl_bots.MOVE
 
@@ -142,18 +145,22 @@ class LoCoQuad(Robot):
         print("CURRENT SUBSTATE: MOVING")
         #super(LoCoQuad, self).move(self.movesCode)
         #super(LoCoQuad, self).move(self.movesCode)
-        self.camera.startVideo()
-        time.sleep(3)
-        start_time = time.time()
-        while ((time.time()-start_time)<1):
+        
+
+        if ((time.time()-self.exploreTime)>ac.EXPLORATION_TIME):
+            self.exploreState = mbl_bots.GETDATA
+            self.state = mbl_bots.REST
+
+        else:
+            start_time = time.time()
             super(LoCoQuad, self).turnRight()
-        time.sleep(1)    
-
-        self.exploreState = mbl_bots.GETDATA
-        self.state = mbl_bots.EXPLORE
-
-    def exploreReconTurn(self):
-        print("Not implemented...")
+            end_time = time.time()
+            print(' ')
+            print('It took me {} s to move'.format(start_time-end_time))
+            self.exploreState = mbl_bots.GETDATA
+            self.state = mbl_bots.EXPLORE
+            
+            
         
 
 
