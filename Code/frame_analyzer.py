@@ -51,8 +51,8 @@ class Analyzer():
 	def getCalibrationAndDistorsionFiles(self):
 		#--- Get the camera calibration path
 		calib_path  = ac.CALIBRATION_PATH
-		self.cam_matrix   = np.loadtxt(calib_path+'cameraMatrix.txt', delimiter=',')
-		self.cam_distortion   = np.loadtxt(calib_path+'cameraDistortion.txt', delimiter=',')
+		self.cam_matrix   = np.loadtxt(calib_path+'/cameraMatrix.txt', delimiter=',')
+		self.cam_distortion   = np.loadtxt(calib_path+'/cameraDistortion.txt', delimiter=',')
 
 ###############################################################################
 
