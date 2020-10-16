@@ -70,7 +70,7 @@ class LoCoQuad(Robot):
         print("CURRENT STATE: REST")
         start_time = time.time()
         while ((time.time()-start_time)<45):
-            if(super(LoCoQuad, self).imu.detectCatch()):
+            if(self.imu.detectCatch()):
                 for i in range(3):
                     super(LoCoQuad, self).shake()
                 break
@@ -111,9 +111,9 @@ class LoCoQuad(Robot):
         print("CURRENT SUBSTATE: DATA ACQUISITION")
         self.distance = utils.getDistance()
         self.lastIMU = self.currentIMU
-        self.currentIMU = super(LoCoQuad, self).imu.getImuRawData()
+        self.currentIMU = self.imu.getImuRawData()
         start_time = time.time()
-        self.frame = super(LoCoQuad, self).camera.getFrame()
+        self.frame = self.camera.getFrame()
         end_time = time.time()
         print('It took me {} us to get the frame'.format(start_time-end_time))
         self.exploreState = mbl_bots.PROCESSDATA
@@ -123,7 +123,7 @@ class LoCoQuad(Robot):
         print("CURRENT SUBSTATE: DATA PROCESSING")
         time.sleep(1)
         start_time = time.time()
-        data = super(LoCoQuad, self).vision.analyze(self.frame)
+        data = self.vision.analyze(self.frame)
         end_time = time.time()
         print(' ')
         print('It took me {} us to process the frame'.format(start_time-end_time))
@@ -141,7 +141,7 @@ class LoCoQuad(Robot):
         print("CURRENT SUBSTATE: MOVING")
         #super(LoCoQuad, self).move(self.movesCode)
         #super(LoCoQuad, self).move(self.movesCode)
-        super(LoCoQuad, self).camera.startVideo()
+        self.camera.startVideo()
         time.sleep(3)
         start_time = time.time()
         while ((time.time()-start_time)<1):
@@ -175,14 +175,14 @@ class LoCoQuad(Robot):
     def PHOTO(self):
         print("CURRENT STATE: PHOTO")
         super(LoCoQuad, self).cameraPose()
-        super(LoCoQuad, self).camera.takePic()
+        self.camera.takePic()
         super(LoCoQuad, self).stand()
         self.state = mbl_bots.EXPLORE
 
 
 
     def close(self, signal, frame):
-        super(LoCoQuad, self).camera.close()
+        self.camera.close()
         print("\nTurning off LoCoQuad Activity...\n")
         GPIO.cleanup() 
         sys.exit(0)
