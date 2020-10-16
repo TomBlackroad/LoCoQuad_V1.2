@@ -132,7 +132,8 @@ class LoCoQuad(Robot):
             self.lastdata = data
         else:
             print("Ohh!! I couldn't find my coordinates...")
-            print("I was in coordinates: X={} Y={} T={} last time".format(data[0][1],data[0][2],data[0][3]))
+            if self.lastdata != -1:
+                print("I was in coordinates: X={} Y={} T={} last time".format(self.lastdata[0][1],self.lastdata[0][2],self.lastdata[0][3]))
 
         self.exploreState = mbl_bots.MOVE
 
