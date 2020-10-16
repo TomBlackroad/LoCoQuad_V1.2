@@ -24,7 +24,6 @@ import numpy as np
 
 import sys, time, math, os
 
-import matplotlib.pyplot as plt
 import scipy.signal as sci
 import scipy.ndimage as sci2 
 
