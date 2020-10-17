@@ -70,6 +70,7 @@ GYRO_ZOUT_H = 0x47
 
 #CAMRA CALIBRATION
 CALIBRATION_PATH = "./CalibrationFiles"
+OUTPUT_PATH = "./Captures/"
 
 RING_SIZE = 4 
 NUMBER_FACES = 4 

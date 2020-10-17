@@ -63,12 +63,16 @@ class Handler:
 		self.rvec_big = None
 		self.tvec_big = None
 		self.frame_number += 1
+		print(' ')
+		print('Processing frame --> ' + self.frame_id)
+		print('Frame Number = {}'.format(self.frame_number))
+		print(' ')
 		
 		measured_T_C = []
 
 		self.frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 		print(' ')
-		print('The Gray Scale frame from camera has size: {}x{}'.format(se))
+		print('The Gray Scale frame from camera has size: {}x{}'.format(self.frame))
 		print(' ')
 		#-- Find all the aruco markers in the image
 		self.corners_small, self.corners_big, self.ids_small, self.ids_big = self.frame_analyzer.findAllArUcoTags(self.frame)
@@ -76,7 +80,8 @@ class Handler:
 		ret_small, ret_big = self.frame_analyzer.poseAllArUcoTags(self.corners_small, self.corners_big, self.ids_small, self.ids_big)
 		
 		if ret_small is not None:
-			#print("small tags detected = " + str(self.frame_analyzer.small_tags_detected))
+			print('SMALL TAGS DETECTED IN FRAME {}'.format(self.frame_number))
+			print("# tags detected = " + str(self.frame_analyzer.small_tags_detected))
 			self.rvec_small, self.tvec_small = ret_small[0], ret_small[1]
 			for i in range(self.frame_analyzer.small_tags_detected):
 				#print("INSIDE FOR SMALL")
@@ -95,7 +100,8 @@ class Handler:
 					self.log.write('\t (%d){%d}[%d]-- x=%4.2f y=%4.2f tita=%4.2f \r' %(ac.SMALL_TAG_CODE,int(self.model.getIndex(self.ids_small[i],ac.SMALL_TAG_CODE)),int(self.ids_small[i][0]),x,y,math.degrees(t)))
 		
 		if ret_big is not None:
-			#print("BIG tags detected = " + str(self.frame_analyzer.big_tags_detected))
+			print('BIG TAGS DETECTED IN FRAME {}'.format(self.frame_number))
+			print("# tags detected = " + str(self.frame_analyzer.big_tags_detected))
 			self.rvec_big, self.tvec_big = ret_big[0], ret_big[1]
 			for i in range(self.frame_analyzer.big_tags_detected):
 				#print("INSIDE FOR BIG")
@@ -117,6 +123,7 @@ class Handler:
 		if ret_small == None and ret_big == None:
 			self.without_tag_frame_number += 1
 			self.tag_number_history.append([0])
+			print('NO TAGS DETECTED IN FRAME {}'.format(self.frame_number))
 			# if ac.WRITE_LOG_FILE:
 			# 		#print('\t (%d)[%4.0f]-- x=%4.2f y=%4.2f tita=%4.2f \r' %(ac.BIG_TAG_CODE,self.ids_big[i][0],x,y,math.degrees(math.atan2(t[1],t[0]))))
 			# 		self.log.write('\nNO TAGS DETECTED\n\n')
@@ -220,9 +227,16 @@ class Handler:
 ###############################################################################
 
 	def processNextFrame(self,frame):
+		print(' ')
+		print('Processing Next Frame')
+		print(' ')
+		print('SAVING FRAME IN CAPTURES FOLDER')
+		print(' ')
+		filename = ac.OUTPUT_PATH + datetime.datetime.now().strftime('%Y-%m-%d--%H-%M-%S.jpg')
+		cv2.imwrite(filename, frame)
 		try:
 			dataList, confi_vector = self.processFrame(frame)
-			print('Frame ' + str(self.frame_id) + ' arrived correctly to the frame_handler!!')
+			print('Frame ' + str(self.frame_number) + ' arrived correctly to the frame_handler!!')
 
 		except:
 			print('No information acquired from frame ' + str(self.frame_number))
