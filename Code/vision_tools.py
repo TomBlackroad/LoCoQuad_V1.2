@@ -196,7 +196,7 @@ class Vision:
 
 		except:
 			processed_data = None
-			err_message = 'ERROR in frame ' + str(self.frame_handler.frame) + '\n'
+			err_message = 'ERROR in frame ' + str(self.frame_handler.frame_number) + '\n'
 			print(err_message)
 
 		return processed_data
