@@ -9,16 +9,38 @@ class Cam(object):
 		self.camera = PiCamera()
 		self.camera.resolution = (640, 480)
 		self.camera.rotation = 180
-		self.camera.framerate = 10
-		self.rawCapture = PiRGBArray(self.camera)
+		self.camera.framerate = 32
+		self.rawCapture = PiRGBArray(self.camera, size=(640, 480))
 	
 	def getFrame(self):
 		self.camera.start_preview()
 		self.camera.capture(self.rawCapture, use_video_port=True, format="bgr")
-		frame = self.rawCapture.array
+		self.frame = self.rawCapture.array
 		print('Captured %dx%d image' % (frame.shape[1], frame.shape[0]))
+		self.rawCapture.truncate(0)
 		self.camera.stop_preview()
-		return frame
+		return self.frame
+
+	def getFrame2(self):
+		for frame in self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True):
+			# grab the raw NumPy array representing the image, then initialize the timestamp
+			# and occupied/unoccupied text
+			self.image = frame.array
+			# show the frame
+			#cv2.imshow("Frame", image)
+			#key = cv2.waitKey(1) & 0xFF
+			# clear the stream in preparation for the next frame
+			self.rawCapture.truncate(0)
+			
+			break
+		return self.image
+
+	def getFrame3(self):
+		self.camera.capture(self.rawCapture, use_video_port=True, format="bgr")
+		self.frame = self.rawCapture.array
+		print('Captured %dx%d image' % (frame.shape[1], frame.shape[0]))
+		self.rawCapture.truncate(0)
+		return self.frame
 
 	def truncateFrame(self):
 		self.rawCapture.truncate(0)
