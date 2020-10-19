@@ -193,14 +193,18 @@ class Handler:
 			if len(small_list) > 0:
 				print('2.- small info list len: ' + str(len(small_list)))
 				small_list = small_list[small_list[:,0].argsort()]
+			
 
-			if big_list.size != 0 and small_list.size != 0:
+			print(big_list.shape)
+			print(small_list.shape)
+			
+			if big_list.shape[0] != 0 and small_list.shape[0] != 0:
 				all_list = np.concatenate((big_list,small_list), axis=1)
 
-			elif big_list.size != 0:
+			elif big_list.shape[0] != 0:
 				all_list = big_list
 
-			elif small_list.size != 0:
+			elif small_list.shape[0] != 0:
 				all_list = small_list
 			
 			print('3.- done creating composed list')
