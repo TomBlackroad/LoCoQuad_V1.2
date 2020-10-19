@@ -98,7 +98,7 @@ class Handler:
 					print(index_sized)
 					index_general = self.model.getIndex(self.ids_small[i],ac.SMALL_TAG_CODE)
 					#print("Sized Index = " + str(index_sized) + " General Index = " + str(index_general))
-					measured_T_C.append([ac.SMALL_TAG_CODE,index_general,msx,msy,msz])
+					measured_T_C.append([ac.SMALL_TAG_CODE,index_sized,msx,msy,msz])
 					#print("adding element OK")
 					x,y,z,t = self.model.getX_Y_Z_T(ac.SMALL_TAG_CODE, self.ids_small[i], self.rvec_small[i,0,:], self.tvec_small[i,0,:])
 					#print("X = " + str(x) + " Y = " + str(y) + " Z = " + str(z) + " Tita = " + str(t))
@@ -119,7 +119,7 @@ class Handler:
 					print(index_sized)
 					index_general = self.model.getIndex(self.ids_big[i],ac.BIG_TAG_CODE)
 					#print("Sized Index = " + str(index_sized) + " General Index = " + str(index_general))
-					measured_T_C.append([ac.BIG_TAG_CODE,index_general,mbx,mby,mbz])
+					measured_T_C.append([ac.BIG_TAG_CODE,index_sized,mbx,mby,mbz])
 					#print("adding element OK")
 					x,y,z,t = self.model.getX_Y_Z_T(ac.BIG_TAG_CODE, self.ids_big[i], self.rvec_big[i,0,:], self.tvec_big[i,0,:])
 					#print("X = " + str(x) + " Y = " + str(y) + " Z = " + str(z) + " Tita = " + str(t))
@@ -150,9 +150,9 @@ class Handler:
 
 		print(measured_T_C)
 
-		try:
-			confi_vector = self.process_T_C_data(measured_T_C)
-		except:
+		confi_vector = None
+		confi_vector = self.process_T_C_data(measured_T_C)
+		if confi_vector == None:
 			print('error creating CONFI_VECTOR')
 
 		return self.frame_data, confi_vector
@@ -161,9 +161,11 @@ class Handler:
 
 	def process_T_C_data(self, measured_T_C):
 		if len(measured_T_C)<1:
+			print('No measured TC')
 			self.real_dist_submatrix = None
 			return None
 		else:
+			print('0.- # measured TC: ' + str(len(measured_T_C)))
 			big_list = []
 			small_list = []
 
@@ -185,9 +187,11 @@ class Handler:
 			small_list = np.asarray(small_list, dtype=np.float32)
 			
 			if len(big_list) > 0:
+				print('1.- big info list len: ' + str(len(big_list)))
 				big_list = big_list[big_list[:,0].argsort()]
 			#big_list = np.argsort(big_list,axis=0)
 			if len(small_list) > 0:
+				print('2.- small info list len: ' + str(len(small_list)))
 				small_list = small_list[small_list[:,0].argsort()]
 
 			if big_list.size != 0 and small_list.size != 0:
@@ -198,6 +202,9 @@ class Handler:
 
 			elif small_list.size != 0:
 				all_list = small_list
+			
+			print('3.- done creating composed list')
+
 			r_matrix_ids = []			
 
 			for j in range(len(big_list)):
@@ -207,6 +214,9 @@ class Handler:
 			for j in range(len(small_list)):
 				index11 = self.model.getIndex(small_list[j][0],ac.SMALL_TAG_CODE)
 				r_matrix_ids.append(index11)
+
+			print('4.- done creating r_matrix_ids')
+
 			r_matrix_ids = np.asarray(r_matrix_ids, dtype=np.int)
 			m_matrix = self.createMeasuredDistMatrix(all_list)
 			r_matrix = self.model.dist_matrix[:,r_matrix_ids]
@@ -216,13 +226,16 @@ class Handler:
 			confi_matrix = 1/np.cosh(5*dist_matrix)
 			confi_vector =	{}
 
-
 			confi_matrix = np.asarray(confi_matrix,dtype=np.float32)
+
+			print('5.- done creating confi_matrix')
 
 			for h in range(len(r_matrix_ids)):
 				index000 = r_matrix_ids[h]
 				index111 =  np.mean(np.concatenate((confi_matrix[h][:h],confi_matrix[h][(h+1):]), axis=0))
 				confi_vector[str(index000)] = index111
+
+			print('6.- done creating confi_vector')
 
 			return confi_vector
 
