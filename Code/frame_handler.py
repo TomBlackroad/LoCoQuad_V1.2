@@ -91,10 +91,11 @@ class Handler:
 				print("# tags detected = " + str(self.frame_analyzer.small_tags_detected))
 				self.rvec_small, self.tvec_small = ret_small[0], ret_small[1]
 				for i in range(self.frame_analyzer.small_tags_detected):
-					#print("INSIDE FOR SMALL")
+					print("SMALL ID LIST:")
 					msx,msy,msz = self.model.getT2C_X_Y_Z(self.rvec_small[i,0,:], self.tvec_small[i,0,:])
 					#print("Measured XYZ: " + str(msx) + " " + str(msy) + " " + str(msz))
 					index_sized = self.ids_small[i][0]
+					print(index_sized)
 					index_general = self.model.getIndex(self.ids_small[i],ac.SMALL_TAG_CODE)
 					#print("Sized Index = " + str(index_sized) + " General Index = " + str(index_general))
 					measured_T_C.append([ac.SMALL_TAG_CODE,index_sized,msx,msy,msz])
@@ -111,10 +112,11 @@ class Handler:
 				print("# tags detected = " + str(self.frame_analyzer.big_tags_detected))
 				self.rvec_big, self.tvec_big = ret_big[0], ret_big[1]
 				for i in range(self.frame_analyzer.big_tags_detected):
-					#print("INSIDE FOR BIG")
+					print("BIG ID LIST:")
 					mbx,mby,mbz = self.model.getT2C_X_Y_Z(self.rvec_big[i,0,:], self.tvec_big[i,0,:])
 					#print("Measured XYZ: " + str(mbx) + " " + str(mby) + " " + str(mbz))
 					index_sized = self.ids_big[i][0]
+					print(index_sized)
 					index_general = self.model.getIndex(self.ids_big[i],ac.BIG_TAG_CODE)
 					#print("Sized Index = " + str(index_sized) + " General Index = " + str(index_general))
 					measured_T_C.append([ac.BIG_TAG_CODE,index_sized,mbx,mby,mbz])
@@ -145,6 +147,8 @@ class Handler:
 				self.tag_number_history.append([len(ret_big)+len(ret_small)])
 		except:
 			print('error and first part of frame processing')
+
+		print(measured_T_C)
 
 		try:
 			confi_vector = self.process_T_C_data(measured_T_C)
@@ -245,7 +249,7 @@ class Handler:
 		#print('SAVING FRAME IN CAPTURES FOLDER')
 		#print(' ')
 		#filename = ac.OUTPUT_PATH + str(self.frame_number)+datetime.datetime.now().strftime('__%H-%M-%S.jpg')
-		#cv2.imwrite(filename, frame)
+		cv2.imshow(str(frame_number+1), frame)
 		try:
 			dataList, confi_vector = self.processFrame(frame)
 			print('Frame ' + str(self.frame_number) + ' arrived correctly to the frame_handler!!')
