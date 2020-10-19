@@ -73,9 +73,13 @@ class Handler:
 		measured_T_C = []
 
 		self.frame = cv2.cvtColor(self.original_frame, cv2.COLOR_BGR2GRAY)
+		# print(self.original_frame)
+		# print(' ')
+		# print(self.frame)
+		# print(' ')
+		print('The Gray Scale frame from camera has size: {}x{}'.format(self.frame.shape[1],self.frame.shape[0]))
 		print(' ')
-		print('The Gray Scale frame from camera has size: {}x{}'.format(self.frame))
-		print(' ')
+
 		#-- Find all the aruco markers in the image
 		self.corners_small, self.corners_big, self.ids_small, self.ids_big = self.frame_analyzer.findAllArUcoTags(self.frame)
 		#-- Compute all poses from ids and corners
