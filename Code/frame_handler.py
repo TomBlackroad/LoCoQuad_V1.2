@@ -249,7 +249,7 @@ class Handler:
 		#print('SAVING FRAME IN CAPTURES FOLDER')
 		#print(' ')
 		#filename = ac.OUTPUT_PATH + str(self.frame_number)+datetime.datetime.now().strftime('__%H-%M-%S.jpg')
-		cv2.imshow(str(frame_number+1), frame)
+		cv2.imshow(str(self.frame_number+1), frame)
 		try:
 			dataList, confi_vector = self.processFrame(frame)
 			print('Frame ' + str(self.frame_number) + ' arrived correctly to the frame_handler!!')
