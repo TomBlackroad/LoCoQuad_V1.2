@@ -16,7 +16,7 @@ class Cam(object):
 		self.camera.start_preview()
 		self.camera.capture(self.rawCapture, use_video_port=True, format="bgr")
 		self.frame = self.rawCapture.array
-		print('Captured %dx%d image' % (frame.shape[1], frame.shape[0]))
+		print('Captured %dx%d image' % (self.frame.shape[1], self.frame.shape[0]))
 		self.rawCapture.truncate(0)
 		self.camera.stop_preview()
 		return self.frame
@@ -26,6 +26,7 @@ class Cam(object):
 			# grab the raw NumPy array representing the image, then initialize the timestamp
 			# and occupied/unoccupied text
 			self.image = frame.array
+			print('Captured %dx%d image' % (self.image.shape[1], self.image.shape[0]))
 			# show the frame
 			#cv2.imshow("Frame", image)
 			#key = cv2.waitKey(1) & 0xFF
@@ -38,7 +39,7 @@ class Cam(object):
 	def getFrame3(self):
 		self.camera.capture(self.rawCapture, use_video_port=True, format="bgr")
 		self.frame = self.rawCapture.array
-		print('Captured %dx%d image' % (frame.shape[1], frame.shape[0]))
+		print('Captured %dx%d image' % (self.frame.shape[1], self.frame.shape[0]))
 		self.rawCapture.truncate(0)
 		return self.frame
 
