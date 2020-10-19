@@ -45,6 +45,7 @@ class Handler:
 		self.deprecated_frame_number = 0
 		self.without_tag_frame_number = 0
 		self.tag_number_history = []
+		self.original_frame = None # Initial FRAME value
 		self.frame = None # Initial FRAME value
 		self.frame_number = 0 # Initial
 		self.ret = True
@@ -63,6 +64,7 @@ class Handler:
 		self.rvec_big = None
 		self.tvec_big = None
 		self.frame_number += 1
+		self.original_frame = frame
 		print(' ')
 		print('Processing frame --> ' + self.frame_id)
 		print('Frame Number = {}'.format(self.frame_number))
@@ -70,7 +72,7 @@ class Handler:
 		
 		measured_T_C = []
 
-		self.frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+		self.frame = cv2.cvtColor(self.original_frame, cv2.COLOR_BGR2GRAY)
 		print(' ')
 		print('The Gray Scale frame from camera has size: {}x{}'.format(self.frame))
 		print(' ')
@@ -79,65 +81,71 @@ class Handler:
 		#-- Compute all poses from ids and corners
 		ret_small, ret_big = self.frame_analyzer.poseAllArUcoTags(self.corners_small, self.corners_big, self.ids_small, self.ids_big)
 		
-		if ret_small is not None:
-			print('SMALL TAGS DETECTED IN FRAME {}'.format(self.frame_number))
-			print("# tags detected = " + str(self.frame_analyzer.small_tags_detected))
-			self.rvec_small, self.tvec_small = ret_small[0], ret_small[1]
-			for i in range(self.frame_analyzer.small_tags_detected):
-				#print("INSIDE FOR SMALL")
-				msx,msy,msz = self.model.getT2C_X_Y_Z(self.rvec_small[i,0,:], self.tvec_small[i,0,:])
-				#print("Measured XYZ: " + str(msx) + " " + str(msy) + " " + str(msz))
-				index_sized = self.ids_small[i][0]
-				index_general = self.model.getIndex(self.ids_small[i],ac.SMALL_TAG_CODE)
-				#print("Sized Index = " + str(index_sized) + " General Index = " + str(index_general))
-				measured_T_C.append([ac.SMALL_TAG_CODE,index_sized,msx,msy,msz])
-				#print("adding element OK")
-				x,y,z,t = self.model.getX_Y_Z_T(ac.SMALL_TAG_CODE, self.ids_small[i], self.rvec_small[i,0,:], self.tvec_small[i,0,:])
-				#print("X = " + str(x) + " Y = " + str(y) + " Z = " + str(z) + " Tita = " + str(t))
-				self.frame_data.append([self.frame_number,x,y,z,t,ac.SMALL_TAG_CODE,self.ids_small[i],int(self.model.getIndex(self.ids_small[i],ac.SMALL_TAG_CODE))])
-				if ac.WRITE_LOG_FILE:
-					#print('\t (%d)[%4.0f]-- x=%4.2f y=%4.2f tita=%4.2f \r' %(ac.SMALL_TAG_CODE,self.ids_small[i][0],x,y,math.degrees(math.atan2(t[1],t[0]))))
-					self.log.write('\t (%d){%d}[%d]-- x=%4.2f y=%4.2f tita=%4.2f \r' %(ac.SMALL_TAG_CODE,int(self.model.getIndex(self.ids_small[i],ac.SMALL_TAG_CODE)),int(self.ids_small[i][0]),x,y,math.degrees(t)))
-		
-		if ret_big is not None:
-			print('BIG TAGS DETECTED IN FRAME {}'.format(self.frame_number))
-			print("# tags detected = " + str(self.frame_analyzer.big_tags_detected))
-			self.rvec_big, self.tvec_big = ret_big[0], ret_big[1]
-			for i in range(self.frame_analyzer.big_tags_detected):
-				#print("INSIDE FOR BIG")
-				mbx,mby,mbz = self.model.getT2C_X_Y_Z(self.rvec_big[i,0,:], self.tvec_big[i,0,:])
-				#print("Measured XYZ: " + str(mbx) + " " + str(mby) + " " + str(mbz))
-				index_sized = self.ids_big[i][0]
-				index_general = self.model.getIndex(self.ids_big[i],ac.BIG_TAG_CODE)
-				#print("Sized Index = " + str(index_sized) + " General Index = " + str(index_general))
-				measured_T_C.append([ac.BIG_TAG_CODE,index_sized,mbx,mby,mbz])
-				#print("adding element OK")
-				x,y,z,t = self.model.getX_Y_Z_T(ac.BIG_TAG_CODE, self.ids_big[i], self.rvec_big[i,0,:], self.tvec_big[i,0,:])
-				#print("X = " + str(x) + " Y = " + str(y) + " Z = " + str(z) + " Tita = " + str(t))
-				self.frame_data.append([self.frame_number,x,y,z,t,ac.BIG_TAG_CODE, self.ids_big[i],int(self.model.getIndex(self.ids_big[i],ac.BIG_TAG_CODE))])
-				#self.x_y_t_history.append[self.frame_number,x,y,t,ac.BIG_TAG_CODE, ids_big[i]]
-				if ac.WRITE_LOG_FILE:
-					#print('\t (%d)[%4.0f]-- x=%4.2f y=%4.2f tita=%4.2f \r' %(ac.BIG_TAG_CODE,self.ids_big[i][0],x,y,math.degrees(math.atan2(t[1],t[0]))))
-					self.log.write('\t (%d)[%d]-- x=%4.2f y=%4.2f tita=%4.2f \r' %(ac.BIG_TAG_CODE,int(self.ids_big[i]),x,y,math.degrees(t)))
+		try:
+			if ret_small is not None:
+				print('SMALL TAGS DETECTED IN FRAME {}'.format(self.frame_number))
+				print("# tags detected = " + str(self.frame_analyzer.small_tags_detected))
+				self.rvec_small, self.tvec_small = ret_small[0], ret_small[1]
+				for i in range(self.frame_analyzer.small_tags_detected):
+					#print("INSIDE FOR SMALL")
+					msx,msy,msz = self.model.getT2C_X_Y_Z(self.rvec_small[i,0,:], self.tvec_small[i,0,:])
+					#print("Measured XYZ: " + str(msx) + " " + str(msy) + " " + str(msz))
+					index_sized = self.ids_small[i][0]
+					index_general = self.model.getIndex(self.ids_small[i],ac.SMALL_TAG_CODE)
+					#print("Sized Index = " + str(index_sized) + " General Index = " + str(index_general))
+					measured_T_C.append([ac.SMALL_TAG_CODE,index_sized,msx,msy,msz])
+					#print("adding element OK")
+					x,y,z,t = self.model.getX_Y_Z_T(ac.SMALL_TAG_CODE, self.ids_small[i], self.rvec_small[i,0,:], self.tvec_small[i,0,:])
+					#print("X = " + str(x) + " Y = " + str(y) + " Z = " + str(z) + " Tita = " + str(t))
+					self.frame_data.append([self.frame_number,x,y,z,t,ac.SMALL_TAG_CODE,self.ids_small[i],int(self.model.getIndex(self.ids_small[i],ac.SMALL_TAG_CODE))])
+					if ac.WRITE_LOG_FILE:
+						#print('\t (%d)[%4.0f]-- x=%4.2f y=%4.2f tita=%4.2f \r' %(ac.SMALL_TAG_CODE,self.ids_small[i][0],x,y,math.degrees(math.atan2(t[1],t[0]))))
+						self.log.write('\t (%d){%d}[%d]-- x=%4.2f y=%4.2f tita=%4.2f \r' %(ac.SMALL_TAG_CODE,int(self.model.getIndex(self.ids_small[i],ac.SMALL_TAG_CODE)),int(self.ids_small[i][0]),x,y,math.degrees(t)))
+			
+			if ret_big is not None:
+				print('BIG TAGS DETECTED IN FRAME {}'.format(self.frame_number))
+				print("# tags detected = " + str(self.frame_analyzer.big_tags_detected))
+				self.rvec_big, self.tvec_big = ret_big[0], ret_big[1]
+				for i in range(self.frame_analyzer.big_tags_detected):
+					#print("INSIDE FOR BIG")
+					mbx,mby,mbz = self.model.getT2C_X_Y_Z(self.rvec_big[i,0,:], self.tvec_big[i,0,:])
+					#print("Measured XYZ: " + str(mbx) + " " + str(mby) + " " + str(mbz))
+					index_sized = self.ids_big[i][0]
+					index_general = self.model.getIndex(self.ids_big[i],ac.BIG_TAG_CODE)
+					#print("Sized Index = " + str(index_sized) + " General Index = " + str(index_general))
+					measured_T_C.append([ac.BIG_TAG_CODE,index_sized,mbx,mby,mbz])
+					#print("adding element OK")
+					x,y,z,t = self.model.getX_Y_Z_T(ac.BIG_TAG_CODE, self.ids_big[i], self.rvec_big[i,0,:], self.tvec_big[i,0,:])
+					#print("X = " + str(x) + " Y = " + str(y) + " Z = " + str(z) + " Tita = " + str(t))
+					self.frame_data.append([self.frame_number,x,y,z,t,ac.BIG_TAG_CODE, self.ids_big[i],int(self.model.getIndex(self.ids_big[i],ac.BIG_TAG_CODE))])
+					#self.x_y_t_history.append[self.frame_number,x,y,t,ac.BIG_TAG_CODE, ids_big[i]]
+					if ac.WRITE_LOG_FILE:
+						#print('\t (%d)[%4.0f]-- x=%4.2f y=%4.2f tita=%4.2f \r' %(ac.BIG_TAG_CODE,self.ids_big[i][0],x,y,math.degrees(math.atan2(t[1],t[0]))))
+						self.log.write('\t (%d)[%d]-- x=%4.2f y=%4.2f tita=%4.2f \r' %(ac.BIG_TAG_CODE,int(self.ids_big[i]),x,y,math.degrees(t)))
 
-		if ret_small == None and ret_big == None:
-			self.without_tag_frame_number += 1
-			self.tag_number_history.append([0])
-			print('NO TAGS DETECTED IN FRAME {}'.format(self.frame_number))
-			# if ac.WRITE_LOG_FILE:
-			# 		#print('\t (%d)[%4.0f]-- x=%4.2f y=%4.2f tita=%4.2f \r' %(ac.BIG_TAG_CODE,self.ids_big[i][0],x,y,math.degrees(math.atan2(t[1],t[0]))))
-			# 		self.log.write('\nNO TAGS DETECTED\n\n')
+			if ret_small == None and ret_big == None:
+				self.without_tag_frame_number += 1
+				self.tag_number_history.append([0])
+				print('NO TAGS DETECTED IN FRAME {}'.format(self.frame_number))
+				# if ac.WRITE_LOG_FILE:
+				# 		#print('\t (%d)[%4.0f]-- x=%4.2f y=%4.2f tita=%4.2f \r' %(ac.BIG_TAG_CODE,self.ids_big[i][0],x,y,math.degrees(math.atan2(t[1],t[0]))))
+				# 		self.log.write('\nNO TAGS DETECTED\n\n')
 
-			self.frame_data.append([self.frame_number,0.0,0.0,0.0,0.0,2.0,999,999])
+				self.frame_data.append([self.frame_number,0.0,0.0,0.0,0.0,2.0,999,999])
 
-		elif ret_small == None:
-			self.tag_number_history.append([len(ret_big)])
-		elif ret_big == None:
-			self.tag_number_history.append([len(ret_small)])
-		else:
-			self.tag_number_history.append([len(ret_big)+len(ret_small)])
-		
-		confi_vector = self.process_T_C_data(measured_T_C)
+			elif ret_small == None:
+				self.tag_number_history.append([len(ret_big)])
+			elif ret_big == None:
+				self.tag_number_history.append([len(ret_small)])
+			else:
+				self.tag_number_history.append([len(ret_big)+len(ret_small)])
+		except:
+			print('error and first part of frame processing')
+
+		try:
+			confi_vector = self.process_T_C_data(measured_T_C)
+		except:
+			print('error creating CONFI_VECTOR')
 
 		return self.frame_data, confi_vector
 
@@ -230,10 +238,10 @@ class Handler:
 		print(' ')
 		print('Processing Next Frame')
 		print(' ')
-		print('SAVING FRAME IN CAPTURES FOLDER')
-		print(' ')
-		filename = ac.OUTPUT_PATH + datetime.datetime.now().strftime('%Y-%m-%d--%H-%M-%S.jpg')
-		cv2.imwrite(filename, frame)
+		#print('SAVING FRAME IN CAPTURES FOLDER')
+		#print(' ')
+		#filename = ac.OUTPUT_PATH + str(self.frame_number)+datetime.datetime.now().strftime('__%H-%M-%S.jpg')
+		#cv2.imwrite(filename, frame)
 		try:
 			dataList, confi_vector = self.processFrame(frame)
 			print('Frame ' + str(self.frame_number) + ' arrived correctly to the frame_handler!!')
