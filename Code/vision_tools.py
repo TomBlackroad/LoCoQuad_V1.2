@@ -188,14 +188,13 @@ class Vision:
 		processed_data = []
 
 		# try:
-			# data, confi_vector = self.frame_handler.processNextFrame(frame)
-			# print('    //////////////////////////////////////////     ')
-			# print('Data from frame -->')
-			# print(data)
-			# print(' ')
-			# print(confi_vector)
-			# processed_data = self.processData(data, confi_vector)
-		processed_data = self.processData(self.frame_handler.processNextFrame(frame))
+		data, confi_vector = self.frame_handler.processNextFrame(frame)
+		print('    //////////////////////////////////////////     ')
+		print('Data from frame -->')
+		print(data)
+		print(' ')
+		print(confi_vector)
+		processed_data = self.processData(data, confi_vector)
 		# except:
 		# 	processed_data = None
 		# 	err_message = 'ERROR in frame ' + str(self.frame_handler.frame_number) + '\n'
