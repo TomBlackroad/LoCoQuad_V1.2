@@ -172,10 +172,9 @@ class Vision:
 ###############################################################################
 
 	def processData(self, data, confi):
-		processed_data = applyConfiFilter(data, confi)*3
-		processed_data += applyDownsampleFilter(data, confi)		
+		processed_data = 3*applyConfiFilter(data, confi)[0]
+		processed_data += applyDownsampleFilter(data, confi)[0]
 		processed_data /= 4
-
 		return processed_data		
 
 ###############################################################################
