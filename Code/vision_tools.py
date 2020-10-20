@@ -122,6 +122,20 @@ class Vision:
 
 ###############################################################################
 
+	def detectWorstMessurement(self,x,y):
+		mean_x = np.mean(x)
+		mean_y = np.mean(y)
+
+		index = None
+		d0 = 0
+		for i in range(len(x)):
+			if abs(x[i] - mean_x) > d0 or abs(y[i] - mean_y) > d0:
+				d0 = max(abs(x[i] - mean_x),abs(y[i] - mean_y))
+				index = i
+		return index
+
+###############################################################################
+
 	def applyConfiFilter(self, data, confi_vector):
 		out = []
 		if len(data) == 1:
@@ -187,18 +201,18 @@ class Vision:
 		data = []
 		processed_data = []
 
-		# try:
-		data, confi_vector = self.frame_handler.processNextFrame(frame)
-		print('    //////////////////////////////////////////     ')
-		print('Data from frame -->')
-		print(data)
-		print(' ')
-		print(confi_vector)
-		processed_data = self.processData(data, confi_vector)
-		# except:
-		# 	processed_data = None
-		# 	err_message = 'ERROR in frame ' + str(self.frame_handler.frame_number) + '\n'
-		# 	print(err_message)
+		try:
+			data, confi_vector = self.frame_handler.processNextFrame(frame)
+			print('    //////////////////////////////////////////     ')
+			print('Data from frame -->')
+			print(data)
+			print(' ')
+			print(confi_vector)
+			processed_data = self.processData(data, confi_vector)
+		except:
+			processed_data = None
+			err_message = 'ERROR in frame ' + str(self.frame_handler.frame_number) + '\n'
+			print(err_message)
 
 		return processed_data
 
