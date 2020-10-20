@@ -195,16 +195,16 @@ class Handler:
 				small_list = small_list[small_list[:,0].argsort()]
 			
 
-			print(big_list.shape)
-			print(small_list.shape)
-			
 			if big_list.shape[0] != 0 and small_list.shape[0] != 0:
-				all_list = np.concatenate((big_list,small_list), axis=1)
+				print("both tags")
+				all_list = np.concatenate((big_list,small_list), axis=0)
 
 			elif big_list.shape[0] != 0:
+				print("just big tags")
 				all_list = big_list
 
 			elif small_list.shape[0] != 0:
+				print("just small tags")
 				all_list = small_list
 			
 			print('3.- done creating composed list')
