@@ -186,9 +186,9 @@ class Vision:
 ###############################################################################
 
 	def processData(self, data, confi):
-		processed_data = 3*self.applyConfiFilter(data, confi)[0]
+		processed_data = 3*self.applyConfiFilter(data, confi)
 		print(processed_data)
-		processed_data += self.applyDownsampleFilter(data)[0]		
+		processed_data += self.applyDownsampleFilter(data)		
 		print(processed_data)
 		processed_data /= 4
 		print(processed_data)
@@ -208,7 +208,8 @@ class Vision:
 			print(data)
 			print(' ')
 			print(confi_vector)
-			processed_data = self.processData(data, confi_vector)
+			processed_data = self.applyConfiFilter(data, confi_vector)
+			# processed_data = self.processData(data, confi_vector)
 		except:
 			processed_data = None
 			err_message = 'ERROR in frame ' + str(self.frame_handler.frame_number) + '\n'
