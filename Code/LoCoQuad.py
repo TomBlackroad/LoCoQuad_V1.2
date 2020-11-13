@@ -33,9 +33,6 @@ class LoCoQuad(Robot):
         elif(len(sys.argv)==3):
             print("EXECUTING VALIDATION")
             self.log = self.createLogFile(str(sys.argv[1]), str(sys.argv[2]))
-            self.log.write("VALIDATION LOG FILE\r\n\n")
-            self.log.write("Position Number: " + str(sys.argv[1]) + "\r\n")
-            self.log.write("Angle Number: " + str(sys.argv[2]) + "\r\n\n")
             self.runValidation()
         
         else: 
@@ -242,6 +239,7 @@ class LoCoQuad(Robot):
                 if data is not None and not wrongFrame:
                     print("{},{},{},{}\n".format(i,data[0][1],data[0][2],data[0][3]+mbl_bots.PI2))
                     self.log.write("{},{},{} \n".format(data[0][1],data[0][2],data[0][3]+mbl_bots.PI2))
+                    data = None
                     self.lastdata = data
                     i += 1
 
