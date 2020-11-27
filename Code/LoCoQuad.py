@@ -29,7 +29,15 @@ class LoCoQuad(Robot):
             print("EXECUTING TEST OF MOVEMENT", str(sys.argv[1])) 
             while True:
                 super(LoCoQuad, self).executeMove(str(sys.argv[1]), 1)
+
+        elif(len(sys.argv)==3):
+            print("EXECUTING VALIDATION")
+            self.log = self.createLogFile(str(sys.argv[1]), str(sys.argv[2]))
+            self.runValidation()
+        
         else: 
+            print("LoCoQuad ACTIVATED!!!!")
+            print(" ")
             while True:
                 self.generalFSM(self.state)
 
@@ -160,13 +168,6 @@ class LoCoQuad(Robot):
             print('It took me {} s to move'.format(start_time-end_time))
             self.exploreState = mbl_bots.GETDATA
             self.state = mbl_bots.EXPLORE
-            
-            
-        
-
-
-
-
 
 #=============================================================================
 # SHOW OFF STATE
@@ -189,6 +190,7 @@ class LoCoQuad(Robot):
         self.state = mbl_bots.EXPLORE
 
 
+##############################################################################
 
     def close(self, signal, frame):
         #self.camera.close()
@@ -196,8 +198,59 @@ class LoCoQuad(Robot):
         GPIO.cleanup() 
         sys.exit(0)
 
-    
 
+    def createLogFile(self, str_pos, str_angle):
+        filename = str_pos + str_angle + ".txt"
+        log_file = open(filename, 'w+', encoding='utf8')
+        print('LOG FILE CREATED')
+        return log_file
+
+    def runValidation(self):
+        i = 1		
+        reading_error = 0
+        process_error = 0
+        empty_frames = 0
+        wrongFrame = False
+        while(i < 25):
+            print(" ")
+            print("Sample {}".format(i))
+            print("-------------")
+            print("#,X,Y,T")
+            try:
+            	start_time = time.time()
+            	self.frame = self.camera.getFrame()
+            	self.camera.truncateFrame()
+            	end_time = time.time()
+            	capture_time = start_time-end_time
+            except:
+            	reading_error += 1
+            	wrongFrame = True
+
+            if not wrongFrame:
+                try:	
+                    start_time = time.time()
+                    data = self.vision.analyze(self.frame)
+                    end_time = time.time()
+                    process_time = start_time-end_time
+                except:
+                    process_error += 1
+                    wrongFrame = True
+
+                if data is not None and not wrongFrame:
+                    print("{},{},{},{}\n".format(i,data[0][1],data[0][2],data[0][3]+mbl_bots.PI2))
+                    self.log.write("{},{},{} \n".format(data[0][1],data[0][2],data[0][3]+mbl_bots.PI2))
+                    data = None
+                    self.lastdata = data
+                    i += 1
+
+            time.sleep(1)
+
+        print("\nNumber of Reading Errors {}".format(reading_error))        
+        print("\nNumber of Process Errors {}".format(process_error))        
+            
+            
+        
+		
 
 #                                                             #     
 #  ---------------------------------------------------------  #
