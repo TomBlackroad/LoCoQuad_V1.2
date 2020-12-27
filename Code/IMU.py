@@ -69,7 +69,8 @@ class IMU:
 
 			data = [Ax,Ay,Az,Gx,Gy,Gz]
 
-		except:
+		except Exception as e:
+			print e
 			data = [0,0,0,0,0,0]
 			print("Error getting IMU data... something went wrong!!")
 		
