@@ -140,12 +140,12 @@ class LoCoQuad(Robot):
         print(' ')
         print('It took me {} s to process the frame'.format(start_time-end_time))
         if data is not None:    
-            print("I am in coordinates: X={} Y={} T={}".format(data[0][1],data[0][2],np.degrees(data[0][3]+mbl_bots.PI2)))
+            print("---->> I am in coordinates: X={} Y={} T={}".format(data[0][1],data[0][2],np.degrees(data[0][3]+mbl_bots.PI2)))
             self.lastdata = data
         else:
             print("Ohh!! I couldn't find my coordinates...")
             if self.lastdata != -1:
-                print("I was in coordinates: X={} Y={} T={} last time (frame: {})".format(self.lastdata[0][1],self.lastdata[0][2],np.degrees(self.lastdata[0][3]+mbl_bots.PI2),self.lastdata[0][0]))
+                print("--> I was in coordinates: X={} Y={} T={} last time (frame: {})".format(self.lastdata[0][1],self.lastdata[0][2],np.degrees(self.lastdata[0][3]+mbl_bots.PI2),self.lastdata[0][0]))
 
         self.exploreState = mbl_bots.MOVE
 
@@ -204,6 +204,12 @@ class LoCoQuad(Robot):
         log_file = open(filename, 'w+', encoding='utf8')
         print('LOG FILE CREATED')
         return log_file
+
+
+#############################################################################################
+# RING Validation
+#############################################################################################
+
 
     def runValidation(self):
         i = 1		

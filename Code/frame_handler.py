@@ -65,8 +65,8 @@ class Handler:
 		self.tvec_big = None
 		self.frame_number += 1
 		self.original_frame = frame
-		print(' ')
-		print('Processing frame --> ' + self.frame_id)
+		print('///////////////////////////////////////////////////////')
+		#print('Processing frame --> ' + self.frame_id)
 		print('Frame Number = {}'.format(self.frame_number))
 		print(' ')
 		
@@ -77,8 +77,8 @@ class Handler:
 		# print(' ')
 		# print(self.frame)
 		# print(' ')
-		print('The Gray Scale frame from camera has size: {}x{}'.format(self.frame.shape[1],self.frame.shape[0]))
-		print(' ')
+		#print('The Gray Scale frame from camera has size: {}x{}'.format(self.frame.shape[1],self.frame.shape[0]))
+		#print(' ')
 
 		#-- Find all the aruco markers in the image
 		self.corners_small, self.corners_big, self.ids_small, self.ids_big = self.frame_analyzer.findAllArUcoTags(self.frame)
@@ -87,15 +87,15 @@ class Handler:
 		
 		try:
 			if ret_small is not None:
-				print('SMALL TAGS DETECTED IN FRAME {}'.format(self.frame_number))
-				print("# tags detected = " + str(self.frame_analyzer.small_tags_detected))
+				#print('SMALL TAGS DETECTED IN FRAME {}'.format(self.frame_number))
+				#print("# tags detected = " + str(self.frame_analyzer.small_tags_detected))
 				self.rvec_small, self.tvec_small = ret_small[0], ret_small[1]
 				for i in range(self.frame_analyzer.small_tags_detected):
-					print("SMALL ID LIST:")
+					#print("SMALL ID LIST:")
 					msx,msy,msz = self.model.getT2C_X_Y_Z(self.rvec_small[i,0,:], self.tvec_small[i,0,:])
 					#print("Measured XYZ: " + str(msx) + " " + str(msy) + " " + str(msz))
 					index_sized = self.ids_small[i][0]
-					print(index_sized)
+					#print(index_sized)
 					index_general = self.model.getIndex(self.ids_small[i],ac.SMALL_TAG_CODE)
 					#print("Sized Index = " + str(index_sized) + " General Index = " + str(index_general))
 					measured_T_C.append([ac.SMALL_TAG_CODE,index_sized,msx,msy,msz])
@@ -108,15 +108,15 @@ class Handler:
 						self.log.write('\t (%d){%d}[%d]-- x=%4.2f y=%4.2f tita=%4.2f \r' %(ac.SMALL_TAG_CODE,int(self.model.getIndex(self.ids_small[i],ac.SMALL_TAG_CODE)),int(self.ids_small[i][0]),x,y,math.degrees(t)))
 			
 			if ret_big is not None:
-				print('BIG TAGS DETECTED IN FRAME {}'.format(self.frame_number))
-				print("# tags detected = " + str(self.frame_analyzer.big_tags_detected))
+				#print('BIG TAGS DETECTED IN FRAME {}'.format(self.frame_number))
+				#print("# tags detected = " + str(self.frame_analyzer.big_tags_detected))
 				self.rvec_big, self.tvec_big = ret_big[0], ret_big[1]
 				for i in range(self.frame_analyzer.big_tags_detected):
-					print("BIG ID LIST:")
+					#print("BIG ID LIST:")
 					mbx,mby,mbz = self.model.getT2C_X_Y_Z(self.rvec_big[i,0,:], self.tvec_big[i,0,:])
 					#print("Measured XYZ: " + str(mbx) + " " + str(mby) + " " + str(mbz))
 					index_sized = self.ids_big[i][0]
-					print(index_sized)
+					#print(index_sized)
 					index_general = self.model.getIndex(self.ids_big[i],ac.BIG_TAG_CODE)
 					#print("Sized Index = " + str(index_sized) + " General Index = " + str(index_general))
 					measured_T_C.append([ac.BIG_TAG_CODE,index_sized,mbx,mby,mbz])
@@ -148,7 +148,7 @@ class Handler:
 		except:
 			print('error and first part of frame processing')
 
-		print(measured_T_C)
+		#print(measured_T_C)
 
 		confi_vector = None
 		confi_vector = self.process_T_C_data(measured_T_C)
@@ -161,11 +161,11 @@ class Handler:
 
 	def process_T_C_data(self, measured_T_C):
 		if len(measured_T_C)<1:
-			print('No measured TC')
+			#print('No measured TC')
 			self.real_dist_submatrix = None
 			return None
 		else:
-			print('0.- # measured TC: ' + str(len(measured_T_C)))
+			#print('0.- # measured TC: ' + str(len(measured_T_C)))
 			big_list = []
 			small_list = []
 
@@ -187,27 +187,27 @@ class Handler:
 			small_list = np.asarray(small_list, dtype=np.float32)
 			
 			if len(big_list) > 0:
-				print('1.- big info list len: ' + str(len(big_list)))
+				#print('1.- big info list len: ' + str(len(big_list)))
 				big_list = big_list[big_list[:,0].argsort()]
 			#big_list = np.argsort(big_list,axis=0)
 			if len(small_list) > 0:
-				print('2.- small info list len: ' + str(len(small_list)))
+				#print('2.- small info list len: ' + str(len(small_list)))
 				small_list = small_list[small_list[:,0].argsort()]
 			
 
 			if big_list.shape[0] != 0 and small_list.shape[0] != 0:
-				print("both tags")
+				#print("both tags")
 				all_list = np.concatenate((big_list,small_list), axis=0)
 
 			elif big_list.shape[0] != 0:
-				print("just big tags")
+				#print("just big tags")
 				all_list = big_list
 
 			elif small_list.shape[0] != 0:
-				print("just small tags")
+				#print("just small tags")
 				all_list = small_list
 			
-			print('3.- done creating composed list')
+			#print('3.- done creating composed list')
 
 			r_matrix_ids = []			
 
@@ -219,7 +219,7 @@ class Handler:
 				index11 = self.model.getIndex(small_list[j][0],ac.SMALL_TAG_CODE)
 				r_matrix_ids.append(index11)
 
-			print('4.- done creating r_matrix_ids')
+			#print('4.- done creating r_matrix_ids')
 
 			r_matrix_ids = np.asarray(r_matrix_ids, dtype=np.int)
 			m_matrix = self.createMeasuredDistMatrix(all_list)
@@ -232,14 +232,14 @@ class Handler:
 
 			confi_matrix = np.asarray(confi_matrix,dtype=np.float32)
 
-			print('5.- done creating confi_matrix')
+			#print('5.- done creating confi_matrix')
 
 			for h in range(len(r_matrix_ids)):
 				index000 = r_matrix_ids[h]
 				index111 =  np.mean(np.concatenate((confi_matrix[h][:h],confi_matrix[h][(h+1):]), axis=0))
 				confi_vector[str(index000)] = index111
 
-			print('6.- done creating confi_vector')
+			#print('6.- done creating confi_vector')
 
 			return confi_vector
 
@@ -260,19 +260,19 @@ class Handler:
 ###############################################################################
 
 	def processNextFrame(self,frame):
-		print(' ')
-		print('Processing Next Frame')
-		print(' ')
+		#print(' ')
+		#print('Processing Next Frame')
+		#print(' ')
 		#print('SAVING FRAME IN CAPTURES FOLDER')
 		#print(' ')
 		#filename = ac.OUTPUT_PATH + str(self.frame_number)+datetime.datetime.now().strftime('__%H-%M-%S.jpg')
 		#cv2.imshow(str(self.frame_number+1), frame)
 		try:
 			dataList, confi_vector = self.processFrame(frame)
-			print('Frame ' + str(self.frame_number) + ' arrived correctly to the frame_handler!!')
+			#print('Frame ' + str(self.frame_number) + ' arrived correctly to the frame_handler!!')
 
 		except:
-			print('No information acquired from frame ' + str(self.frame_number))
+			#print('No information acquired from frame ' + str(self.frame_number))
 			dataList = None
 			confi_vector = None
 
