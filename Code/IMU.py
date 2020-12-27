@@ -39,6 +39,8 @@ class IMU:
 		high = self.bus.read_byte_data(self.Device_Address, addr)
 		low = self.bus.read_byte_data(self.Device_Address, addr+1)
 
+		print(high)
+		print(low)
 		#concatenate higher and lower value
 		value = ((high << 8) | low)
 
@@ -53,12 +55,12 @@ class IMU:
 			acc_x = self.read_raw_data(mbl_bots.ACCEL_XOUT_H)
 			acc_y = self.read_raw_data(mbl_bots.ACCEL_YOUT_H)
 			acc_z = self.read_raw_data(mbl_bots.ACCEL_ZOUT_H)
-			print(acc_z)
+			#print(acc_z)
 	        #Read Gyroscope raw value
 			gyro_x = self.read_raw_data(mbl_bots.GYRO_XOUT_H)
 			gyro_y = self.read_raw_data(mbl_bots.GYRO_YOUT_H)
 			gyro_z = self.read_raw_data(mbl_bots.GYRO_ZOUT_H)
-			print(gyro_z)
+			#print(gyro_z)
 	        #Full scale range +/- 250 degree/C as per sensitivity scale factor
 			Ax = acc_x/16384.0
 			Ay = acc_y/16384.0
