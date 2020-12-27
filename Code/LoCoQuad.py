@@ -28,9 +28,10 @@ class LoCoQuad(Robot):
         if(len(sys.argv)==2):
             print("EXECUTING TEST OF MOVEMENT", str(sys.argv[1])) 
             while True:
-                super(LoCoQuad, self).executeMove(str(sys.argv[1]), 1)
+                #super(LoCoQuad, self).executeMove(str(sys.argv[1]), 1)
                 data = self.imu.getImuRawData()
                 print(data[0:3])
+                time.sleep(1)
 
         elif(len(sys.argv)==3):
             print("EXECUTING VALIDATION")
