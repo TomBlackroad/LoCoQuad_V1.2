@@ -34,6 +34,7 @@ class IMU:
 
 
 	def read_raw_data(self, addr):
+		self.bus.write_byte_data(self.Device_Address,0xA5,0x5A)
 		#Accelero and Gyro value are 16-bit
 		high = self.bus.read_byte_data(self.Device_Address, addr)
 		low = self.bus.read_byte_data(self.Device_Address, addr+1)
