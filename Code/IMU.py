@@ -55,33 +55,43 @@ class IMU:
 		return value
 
 	def getImuRawData(self):
-		try:
-	        #Read Accelerometer raw value
-			acc_x = self.read_raw_data(mbl_bots.ACCEL_XOUT_H)
-			acc_y = self.read_raw_data(mbl_bots.ACCEL_YOUT_H)
-			acc_z = self.read_raw_data(mbl_bots.ACCEL_ZOUT_H)
-			#print(acc_z)
-	        #Read Gyroscope raw value
-			gyro_x = self.read_raw_data(mbl_bots.GYRO_XOUT_H)
-			gyro_y = self.read_raw_data(mbl_bots.GYRO_YOUT_H)
-			gyro_z = self.read_raw_data(mbl_bots.GYRO_ZOUT_H)
-			#print(gyro_z)
-	        #Full scale range +/- 250 degree/C as per sensitivity scale factor
-			Ax = acc_x/16384.0
-			Ay = acc_y/16384.0
-			Az = acc_z/16384.0
+		data = [0,0,0,0,0,0]
+		count = 0
+		for i in range(20)
+			try:
+		        #Read Accelerometer raw value
+				acc_x = self.read_raw_data(mbl_bots.ACCEL_XOUT_H)
+				acc_y = self.read_raw_data(mbl_bots.ACCEL_YOUT_H)
+				acc_z = self.read_raw_data(mbl_bots.ACCEL_ZOUT_H)
+				#print(acc_z)
+		        #Read Gyroscope raw value
+				gyro_x = self.read_raw_data(mbl_bots.GYRO_XOUT_H)
+				gyro_y = self.read_raw_data(mbl_bots.GYRO_YOUT_H)
+				gyro_z = self.read_raw_data(mbl_bots.GYRO_ZOUT_H)
+				#print(gyro_z)
+		        #Full scale range +/- 250 degree/C as per sensitivity scale factor
+				data[0] += acc_x/16384.0
+				data[1] += acc_y/16384.0
+				data[2] += acc_z/16384.0
 
-			Gx = gyro_x/131.0
-			Gy = gyro_y/131.0
-			Gz = gyro_z/131.0
+				data[3] += gyro_x/131.0
+				data[4] += gyro_y/131.0
+				data[5] += gyro_z/131.0
 
-			data = [Ax,Ay,Az,Gx,Gy,Gz]
+				count += 1
 
-		except Exception as e:
-			print(e)
-			data = [0,0,0,0,0,0]
-			print("Error getting IMU data... something went wrong!!")
+			except:
+				data = [0,0,0,0,0,0]
+				print("Error getting IMU data... something went wrong!!")
 		
+
+		data[0] /= count
+		data[1] /= count
+		data[2] /= count
+		data[3] /= count
+		data[4] /= count
+		data[5] /= count
+
 		return data
 
 	def getStringImuRawData(self):
