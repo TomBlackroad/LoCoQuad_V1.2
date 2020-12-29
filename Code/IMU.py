@@ -57,7 +57,7 @@ class IMU:
 	def getImuRawData(self):
 		data = [0,0,0,0,0,0]
 		count = 0
-		for i in range(20)
+		for i in range(20):
 			try:
 		        #Read Accelerometer raw value
 				acc_x = self.read_raw_data(mbl_bots.ACCEL_XOUT_H)
