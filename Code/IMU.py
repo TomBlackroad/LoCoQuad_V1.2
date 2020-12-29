@@ -17,20 +17,29 @@ class IMU:
 
 
 	def MPU_Init(self):
-		#write to sample rate register
-		self.bus.write_byte_data(self.Device_Address, mbl_bots.SMPLRT_DIV, 7)
+		done = False
+		while(done = False):
+			try:
+				#write to sample rate register
+				self.bus.write_byte_data(self.Device_Address, mbl_bots.SMPLRT_DIV, 7)
 
-		#Write to power management register
-		self.bus.write_byte_data(self.Device_Address, mbl_bots.PWR_MGMT_1, 1)
+				#Write to power management register
+				self.bus.write_byte_data(self.Device_Address, mbl_bots.PWR_MGMT_1, 1)
 
-		#Write to Configuration register
-		self.bus.write_byte_data(self.Device_Address, mbl_bots.CONFIG, 0)
+				#Write to Configuration register
+				self.bus.write_byte_data(self.Device_Address, mbl_bots.CONFIG, 0)
 
-		#Write to Gyro configuration register
-		self.bus.write_byte_data(self.Device_Address, mbl_bots.GYRO_CONFIG, 24)
+				#Write to Gyro configuration register
+				self.bus.write_byte_data(self.Device_Address, mbl_bots.GYRO_CONFIG, 24)
 
-		#Write to interrupt enable register
-		self.bus.write_byte_data(self.Device_Address, mbl_bots.INT_ENABLE, 1)
+				#Write to interrupt enable register
+				self.bus.write_byte_data(self.Device_Address, mbl_bots.INT_ENABLE, 1)
+
+				done = True
+
+			except:
+				done = False
+
 
 
 	def read_raw_data(self, addr):
