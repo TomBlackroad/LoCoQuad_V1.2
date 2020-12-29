@@ -18,7 +18,7 @@ class IMU:
 
 	def MPU_Init(self):
 		done = False
-		while(done = False):
+		while(done == False):
 			try:
 				#write to sample rate register
 				self.bus.write_byte_data(self.Device_Address, mbl_bots.SMPLRT_DIV, 7)
