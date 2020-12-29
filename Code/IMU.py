@@ -43,18 +43,16 @@ class IMU:
 
 
 	def read_raw_data(self, addr):
-		#self.bus.write_byte_data(self.Device_Address,0xA5,0x5A)
-		#Accelero and Gyro value are 16-bit
-		#high = self.bus.read_byte_data(self.Device_Address, addr)
-		#low = self.bus.read_byte_data(self.Device_Address, addr+1)
+		self.bus.write_byte_data(self.Device_Address,0xA5,0x5A)
+		# Accelero and Gyro value are 16-bit
+		high = self.bus.read_byte_data(self.Device_Address, addr)
+		low = self.bus.read_byte_data(self.Device_Address, addr+1)
 
-		
-
-		Register = self.bus.read_i2c_block_data(addr, addr+1,1)
-		high = Register[0]*1.0
-		low = Register[1]*1.0
-		print(high)
-		print(low)
+		# Register = self.bus.read_i2c_block_data(addr, addr+1,1)
+		# high = Register[0]*1.0
+		# low = Register[1]*1.0
+		# print(high)
+		# print(low)
 		#concatenate higher and lower value
 		value = ((high << 8) | low)
 
@@ -63,10 +61,11 @@ class IMU:
 			value = value - 65536
 		return value
 
-	def getImuRawData(self):
+	def getImuRawData(self, n_measurements=200):
 		data = [0,0,0,0,0,0]
+		data = np.zeros((n_measurements, 6))
 		count = 0
-		for i in range(20):
+		while count < n_measurements:
 			try:
 		        #Read Accelerometer raw value
 				acc_x = self.read_raw_data(mbl_bots.ACCEL_XOUT_H)
@@ -79,27 +78,23 @@ class IMU:
 				gyro_z = self.read_raw_data(mbl_bots.GYRO_ZOUT_H)
 				#print(gyro_z)
 		        #Full scale range +/- 250 degree/C as per sensitivity scale factor
-				data[0] += acc_x/16384.0
-				data[1] += acc_y/16384.0
-				data[2] += acc_z/16384.0
+				data[count,0] += acc_x/16384.0
+				data[count,1] += acc_y/16384.0
+				data[count,2] += acc_z/16384.0
 
-				data[3] += gyro_x/131.0
-				data[4] += gyro_y/131.0
-				data[5] += gyro_z/131.0
+				data[count,3] += gyro_x/131.0
+				data[count,4] += gyro_y/131.0
+				data[count,5] += gyro_z/131.0
 
 				count += 1
 
 			except:
-				data = [0,0,0,0,0,0]
-				print("Error getting IMU data... something went wrong!!")
+				pass
+				# data = [0,0,0,0,0,0]
+				# print("Error getting IMU data... something went wrong!!")
 		
+		print('Correct measurements', count)
 
-		data[0] /= count
-		data[1] /= count
-		data[2] /= count
-		data[3] /= count
-		data[4] /= count
-		data[5] /= count
 
 		return data
 
